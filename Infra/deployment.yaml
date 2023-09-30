@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airlab-app
+  namespace: airlab-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airlab-app
+  template:
+    metadata:
+      labels:
+        app: airlab-app
+    spec:
+      containers:
+        - name: airlab-app
+          image: airlab-app:1.1
+          ports:
+          - containerPort: 8000
+          env:
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: airlab-secret
+                  key: api_key
+            - name: BASE_API_URL
+              value: "https://open-atms.airlab.aero/api/v1/"

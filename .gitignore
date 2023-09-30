@@ -1,0 +1,2 @@
+# Ignore build directories
+App/__pycache__
