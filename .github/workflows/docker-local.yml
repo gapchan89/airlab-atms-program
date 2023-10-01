@@ -15,12 +15,14 @@ jobs:
       # TODO: Consider run test case here
 
       - name: Configure Docker to Use Minikube Registry
+        shell: pwsh
         run: |
           # Configure Docker to use the Minikube Docker daemon
           # eval $(minikube -p minikube docker-env)
           minikube docker-env | Invoke-Expression      
 
       - name: Build Docker Image
+        shell: pwsh
         run: |
           # Do this step for windows powershell to allow execution of scripts
           # Set-ExecutionPolicy -ExecutionPolicy Bypass
@@ -29,6 +31,7 @@ jobs:
         working-directory: C:\Users\gapch\Desktop\Dev\airlab-atms-program
           
       - name: Push Docker Image to Minikube Registry
+        shell: pwsh
         run: |
           # Push the Docker image to the Minikube Docker registry
           docker push airlab-app-image:latest
