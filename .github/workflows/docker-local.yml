@@ -45,23 +45,22 @@ jobs:
           eval $(minikube -p minikube docker-env)     
 
       - name: Build Docker Image on MacOS Locally
-        run: |
-          pwd
-          ls -ltr        
+        run: |       
           # Build Docker image
           docker build -t airlab-app-image:latest .
           docker tag airlab-app-image:latest minikube/airlab-app-image:latest
         working-directory: App/
 
       - name: Deploy Kubectl deployment and services
-        run: |
-          pwd
-          ls -ltr             
+        run: |            
           # Deploy deployment file
           kubectl apply -f airlab-deployment.yaml
 
           # Deploy service file
           kubectl apply -f airlab-service.yaml
+
+          echo "Sleep 10 seconds before continuing"
+          sleep 10
 
           # Run minikube tunnel to airlab-app-service
           minikube service airlab-app-service -n airlab-namespace
