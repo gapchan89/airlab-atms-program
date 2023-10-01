@@ -53,6 +53,8 @@ jobs:
 
       - name: Deploy Kubectl deployment and services
         run: |
+          pwd
+          ls -ltr
           # Deploy deployment file
           kubectl apply -f airlab-deployment.yaml
 
