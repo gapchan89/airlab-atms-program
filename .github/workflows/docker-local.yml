@@ -15,11 +15,10 @@ jobs:
       # TODO: Consider run test case here
 
       - name: Configure Docker to Use Minikube Registry
-        shell: pwsh
         run: |
           # Configure Docker to use the Minikube Docker daemon
-          # eval $(minikube -p minikube docker-env)
-          minikube docker-env | Invoke-Expression      
+          eval $(minikube -p minikube docker-env)
+          #minikube docker-env | Invoke-Expression      
 
       - name: Build Docker Image
         shell: pwsh
