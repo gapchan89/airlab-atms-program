@@ -18,7 +18,7 @@ spec:
           image: airlab-app-image:latest
           imagePullPolicy: IfNotPresent
           ports:
-          - containerPort: 8000
+          - containerPort: 5000
           env:
             - name: API_KEY
               valueFrom:

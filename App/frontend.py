@@ -20,4 +20,4 @@ def get_stars(airport_code):
     return jsonify(response)
 
 if __name__ == '__main__':
-    app.run(debug=False, port=8000)
+    app.run(debug=False, port=5000)

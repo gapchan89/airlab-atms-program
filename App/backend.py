@@ -83,4 +83,4 @@ def calculate_sid(airport_code):
     return output
 
 # Testing mode if running locally
-query_server_sid("WSSS")
+#query_server_sid("WSSS")
