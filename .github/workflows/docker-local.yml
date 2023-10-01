@@ -51,7 +51,7 @@ jobs:
           # Build Docker image
           docker build -t airlab-app-image:latest .
           docker tag airlab-app-image:latest minikube/airlab-app-image:latest
-        working-directory: Apps/
+        working-directory: App/
 
       - name: Deploy Kubectl deployment and services
         run: |
