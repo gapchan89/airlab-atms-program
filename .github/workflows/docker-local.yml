@@ -17,7 +17,7 @@ jobs:
       - name: Build Docker Image
         run: |
           # Do this step for windows powershell to allow execution of scripts
-          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+          Set-ExecutionPolicy -ExecutionPolicy Bypass
           # Build your Docker image
           docker build -t airlab-app-image:latest .
         working-directory: C:\Users\gapch\Desktop\Dev\airlab-atms-program
