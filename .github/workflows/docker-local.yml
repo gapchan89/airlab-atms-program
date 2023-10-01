@@ -19,7 +19,6 @@ jobs:
           minikube docker-env | Invoke-Expression
 
       - name: Build Docker Image on Windows Locally
-        runs-on: 
         run: |
           # Build Docker image
           docker build -t airlab-app-image:latest .
