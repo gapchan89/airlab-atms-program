@@ -21,7 +21,6 @@ jobs:
           minikube docker-env | Invoke-Expression      
 
       - name: Build Docker Image
-        shell: pwsh
         run: |
           # Do this step for windows powershell to allow execution of scripts
           # Set-ExecutionPolicy -ExecutionPolicy Bypass
@@ -30,7 +29,6 @@ jobs:
         working-directory: C:\Users\gapch\Desktop\Dev\airlab-atms-program
           
       - name: Push Docker Image to Minikube Registry
-        shell: pwsh
         run: |
           # Push the Docker image to the Minikube Docker registry
           docker push airlab-app-image:latest
