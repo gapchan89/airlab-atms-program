@@ -12,6 +12,7 @@ jobs:
         uses: actions/checkout@v2
 
       # TODO: Consider run test case here
+      # We assume minikube is started      
 
       - name: Configure Docker to Use Minikube Registry
         run: |
@@ -36,19 +37,32 @@ jobs:
         uses: actions/checkout@v2
     
       # TODO: Consider run test case here
+      # We assume minikube is started
+
+      - name: Configure Docker to Use Minikube Registry
+        run: |
+          # Configure Docker to use the Minikube Docker daemon
+          eval $(minikube -p minikube docker-env)     
 
       - name: Build Docker Image on MacOS Locally
         run: |
           # Build Docker image
           docker build -t airlab-app-image:latest .
-        working-directory: /Users/coddle/Desktop/airlab/airlab-atms-program/App/     
-          
-      - name: Push Docker Image to Minikube Registry
+          docker tag airlab-app-image:latest minikube/airlab-app-image:latest
+        working-directory: /Users/coddle/Desktop/airlab/airlab-atms-program/App/
+
+      - name: Deploy Kubectl deployment and services
         run: |
-          # Push the Docker image to the Minikube Docker registry
-          docker push airlab-app-image:latest        
+          # Deploy deployment file
+          kubectl apply -f airlab-deployment.yaml
 
+          # Deploy service file
+          kubectl apply -f airlab-service.yaml
 
+          # Run minikube tunnel to airlab-app-service
+          minikube service airlab-app-service -n airlab-namespace
+        working-directory: /Users/coddle/Desktop/airlab/airlab-atms-program/Infra/
+               
       # Update Kubernetes file to use latest image
       # Update service, if needed
 

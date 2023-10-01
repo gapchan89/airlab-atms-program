@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
         - name: airlab-app
-          image: airlab-app:latest
+          image: airlab-app-image:latest
+          imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 8000
           env:
