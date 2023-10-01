@@ -51,7 +51,7 @@ jobs:
           # Build Docker image
           docker build -t airlab-app-image:latest .
           docker tag airlab-app-image:latest minikube/airlab-app-image:latest
-        working-directory: ./Apps/
+        working-directory: Apps/
 
       - name: Deploy Kubectl deployment and services
         run: |
@@ -65,7 +65,7 @@ jobs:
 
           # Run minikube tunnel to airlab-app-service
           minikube service airlab-app-service -n airlab-namespace
-        working-directory: ./Infra/
+        working-directory: Infra/
                
       # Update Kubernetes file to use latest image
       # Update service, if needed
