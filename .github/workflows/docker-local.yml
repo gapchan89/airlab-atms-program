@@ -5,9 +5,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-and-push:
-    runs-on: self-hosted  # Use the self-hosted runner which is on Powershell
-    
+  build-and-push-local-windows:
+    runs-on: [self-hosted, Windows]  # Use the self-hosted runner which is on Powershell
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -15,20 +14,31 @@ jobs:
       # TODO: Consider run test case here
 
       - name: Configure Docker to Use Minikube Registry
-        runs-on: [self-hosted, Windows]
         run: |
           # Configure Docker to use the Minikube Docker daemon
           minikube docker-env | Invoke-Expression
 
       - name: Build Docker Image on Windows Locally
-        runs-on: [self-hosted, Windows]
+        runs-on: 
         run: |
           # Build Docker image
           docker build -t airlab-app-image:latest .
         working-directory: C:\Users\gapch\Desktop\Dev\airlab-atms-program\App\
+          
+      - name: Push Docker Image to Minikube Registry
+        run: |
+          # Push the Docker image to the Minikube Docker registry
+          docker push airlab-app-image:latest
+
+  build-and-push-local-mac:
+    runs-on: [self-hosted, macOS]  # Use the self-hosted runner which is on MacOS
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+    
+      # TODO: Consider run test case here
 
       - name: Build Docker Image on MacOS Locally
-        runs-on: [self-hosted, macOS]
         run: |
           # Build Docker image
           docker build -t airlab-app-image:latest .
@@ -37,10 +47,10 @@ jobs:
       - name: Push Docker Image to Minikube Registry
         run: |
           # Push the Docker image to the Minikube Docker registry
-          docker push airlab-app-image:latest
+          docker push airlab-app-image:latest        
+
 
       # Update Kubernetes file to use latest image
-
       # Update service, if needed
 
 
