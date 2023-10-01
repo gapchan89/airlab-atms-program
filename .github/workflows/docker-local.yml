@@ -41,7 +41,7 @@ jobs:
         run: |
           # Build Docker image
           docker build -t airlab-app-image:latest .
-        working-directory: /Users/coddle/Desktop/airlab-atms-program/App/     
+        working-directory: /Users/coddle/Desktop/airlab/airlab-atms-program/App/     
           
       - name: Push Docker Image to Minikube Registry
         run: |
