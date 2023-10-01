@@ -13,7 +13,13 @@ jobs:
         uses: actions/checkout@v2
 
       # TODO: Consider run test case here
-      
+
+      - name: Configure Docker to Use Minikube Registry
+        run: |
+          # Configure Docker to use the Minikube Docker daemon
+          # eval $(minikube -p minikube docker-env)
+          minikube docker-env | Invoke-Expression      
+
       - name: Build Docker Image
         run: |
           # Do this step for windows powershell to allow execution of scripts
@@ -21,12 +27,6 @@ jobs:
           # Build your Docker image
           docker build -t airlab-app-image:latest .
         working-directory: C:\Users\gapch\Desktop\Dev\airlab-atms-program
-
-      - name: Configure Docker to Use Minikube Registry
-        run: |
-          # Configure Docker to use the Minikube Docker daemon
-          # eval $(minikube -p minikube docker-env)
-          minikube docker-env | Invoke-Expression
           
       - name: Push Docker Image to Minikube Registry
         run: |
