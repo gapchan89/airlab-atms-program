@@ -1,0 +1,38 @@
+name: Build docker image and push to Minikube repository
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-push:
+    runs-on: self-hosted  # Use the self-hosted runner which is on Powershell
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      # TODO: Consider run test case here
+      
+      - name: Build Docker Image
+        run: |
+          # Build your Docker image
+          docker build -t airlab-app-image:latest .
+        working-directory: C:\Users\gapch\Desktop\Dev\airlab-atms-program
+
+      - name: Configure Docker to Use Minikube Registry
+        run: |
+          # Configure Docker to use the Minikube Docker daemon
+          # eval $(minikube -p minikube docker-env)
+          minikube docker-env | Invoke-Expression
+          
+      - name: Push Docker Image to Minikube Registry
+        run: |
+          # Push the Docker image to the Minikube Docker registry
+          docker push airlab-app-image:latest
+
+      # Update Kubernetes file to use latest image
+
+      # Update service, if needed
+
+
