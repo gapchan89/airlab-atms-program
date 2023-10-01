@@ -15,18 +15,24 @@ jobs:
       # TODO: Consider run test case here
 
       - name: Configure Docker to Use Minikube Registry
+        runs-on: [self-hosted, Windows]
         run: |
           # Configure Docker to use the Minikube Docker daemon
-          #eval $(minikube -p minikube docker-env)
-          minikube docker-env | Invoke-Expression      
+          minikube docker-env | Invoke-Expression
 
-      - name: Build Docker Image
+      - name: Build Docker Image on Windows Locally
+        runs-on: [self-hosted, Windows]
         run: |
-          # Do this step for windows powershell to allow execution of scripts
-          # Set-ExecutionPolicy -ExecutionPolicy Bypass
-          # Build your Docker image
+          # Build Docker image
           docker build -t airlab-app-image:latest .
-        working-directory: C:\Users\gapch\Desktop\Dev\airlab-atms-program
+        working-directory: C:\Users\gapch\Desktop\Dev\airlab-atms-program\App\
+
+      - name: Build Docker Image on MacOS Locally
+        runs-on: [self-hosted, macOS]
+        run: |
+          # Build Docker image
+          docker build -t airlab-app-image:latest .
+        working-directory: /Users/coddle/Desktop/airlab-atms-program/App/     
           
       - name: Push Docker Image to Minikube Registry
         run: |
