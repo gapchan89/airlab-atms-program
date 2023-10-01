@@ -34,7 +34,7 @@ jobs:
     runs-on: [self-hosted, macOS]  # Use the self-hosted runner which is on MacOS
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
     
       # TODO: Consider run test case here
       # We assume minikube is started
@@ -46,6 +46,8 @@ jobs:
 
       - name: Build Docker Image on MacOS Locally
         run: |
+          pwd
+          ls -ltr        
           # Build Docker image
           docker build -t airlab-app-image:latest .
           docker tag airlab-app-image:latest minikube/airlab-app-image:latest
@@ -54,7 +56,7 @@ jobs:
       - name: Deploy Kubectl deployment and services
         run: |
           pwd
-          ls -ltr
+          ls -ltr             
           # Deploy deployment file
           kubectl apply -f airlab-deployment.yaml
 
