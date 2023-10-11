@@ -45,7 +45,10 @@ jobs:
           eval $(minikube -p minikube docker-env)     
 
       - name: Build Docker Image on MacOS Locally
-        run: |       
+        run: |
+          # Configure Docker to use the Minikube Docker daemon
+          eval $(minikube -p minikube docker-env)  
+
           # Build Docker image
           docker build -t airlab-app-image:${{ github.sha }} .
           #docker tag airlab-app-image:latest minikube/airlab-app-image:${{ github.sha }}
