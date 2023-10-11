@@ -11,24 +11,26 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      # TODO: Consider run test case here
-      # We assume minikube is started      
-
-      - name: Configure Docker to Use Minikube Registry
+      - name: Build Docker Image on Windows Locally
         run: |
           # Configure Docker to use the Minikube Docker daemon
           minikube docker-env | Invoke-Expression
 
-      - name: Build Docker Image on Windows Locally
-        run: |
           # Build Docker image
-          docker build -t airlab-app-image:latest .
-        working-directory: C:\Users\gapch\Desktop\Dev\airlab-atms-program\App\
+          docker build -t airlab-app-image:${{ github.sha }} .
+        working-directory: App/
           
       - name: Push Docker Image to Minikube Registry
         run: |
-          # Push the Docker image to the Minikube Docker registry
-          docker push airlab-app-image:latest
+          # Deploy deployment file
+          kubectl apply -f airlab-deployment.yaml
+          kubectl set image deployment/airlab-app airlab-app=airlab-app-image:${{ github.sha }}
+
+          # Deploy service file
+          kubectl apply -f airlab-service.yaml
+        working-directory: Infra/
+
+      # TODO: Consider run test case to verify service is good         
 
   build-and-push-local-mac:
     runs-on: [self-hosted, macOS]  # Use the self-hosted runner which is on MacOS
@@ -36,14 +38,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
     
-      # TODO: Consider run test case here
-      # We assume minikube is started
-
-      - name: Configure Docker to Use Minikube Registry
-        run: |
-          # Configure Docker to use the Minikube Docker daemon
-          eval $(minikube -p minikube docker-env)     
-
+      # We assume minikube and docker engine is started
       - name: Build Docker Image on MacOS Locally
         run: |
           # Configure Docker to use the Minikube Docker daemon
@@ -63,3 +58,5 @@ jobs:
           # Deploy service file
           kubectl apply -f airlab-service.yaml
         working-directory: Infra/
+
+      # TODO: Consider run test case to verify service is good        
