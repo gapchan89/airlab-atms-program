@@ -47,8 +47,8 @@ jobs:
       - name: Build Docker Image on MacOS Locally
         run: |       
           # Build Docker image
-          docker build -t airlab-app-image:latest .
-          docker tag airlab-app-image:latest minikube/airlab-app-image:${{ github.sha }}
+          docker build -t airlab-app-image:${{ github.sha }} .
+          # docker tag airlab-app-image:latest minikube/airlab-app-image:${{ github.sha }}
         working-directory: App/
 
       - name: Deploy Kubectl deployment and services
