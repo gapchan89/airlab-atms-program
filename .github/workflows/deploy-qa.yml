@@ -1,0 +1,46 @@
+name: Build docker image and push to Minikube repository
+
+on:
+  push:
+    branches: [ "qa" ]
+
+jobs:
+  build-and-deploy-qa:
+    runs-on: ubuntu-latest
+    steps:
+      # Either we checkout code from QA, or we should be downloading image from a image respository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # We assume minikube environment
+      - name: Configure Docker to Use Minikube Registry
+        run: |
+          # Configure Docker to use the Minikube Docker daemon
+          eval $(minikube -p minikube docker-env)     
+
+      - name: Build Docker Image
+        run: |       
+          # Build Docker image
+          docker build -t airlab-app-image:latest .
+          docker tag airlab-app-image:latest minikube/airlab-app-image:latest
+        working-directory: App/
+
+      # - name: Download Docker image
+      #   id: download-image
+      #   uses: docker/metadata-action@v3
+      #   with:
+      #     image: <your-docker-hub-username>/airlab-app:latest
+
+      # - name: Display downloaded image information
+      #   run: |
+      #     echo "Image Name: ${{ steps.download-image.outputs.name }}"
+      #     echo "Image Tag: ${{ steps.download-image.outputs.tag }}"
+
+      - name: Deploy Kubectl deployment and services
+        run: |            
+          # Deploy deployment file
+          kubectl apply -f airlab-deployment.yaml
+
+          # Deploy service file
+          kubectl apply -f airlab-service.yaml
+        working-directory: Infra/

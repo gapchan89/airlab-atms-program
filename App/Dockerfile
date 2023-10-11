@@ -13,4 +13,4 @@ COPY requirements.txt /app/
 RUN pip install -r requirements.txt
 
 # Specify the command to run your Python script
-CMD ["python", "frontend.py"]
+CMD ["python3", "frontend.py"]

@@ -1,0 +1,54 @@
+name: Build docker image and push to Minikube repository
+
+on:
+  push:
+    branches: [ "prod" ]
+
+jobs:
+  deploy-production:
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # We assume minikube environment
+      - name: Configure Docker to Use Minikube Registry
+        run: |
+          # Configure Docker to use the Minikube Docker daemon
+          eval $(minikube -p minikube docker-env)     
+
+      - name: Build Docker Image
+        run: |       
+          # Build Docker image
+          docker build -t airlab-app-image:latest .
+          docker tag airlab-app-image:latest minikube/airlab-app-image:latest
+        working-directory: App/
+
+      # - name: Download Docker image
+      #   id: download-image
+      #   uses: docker/metadata-action@v3
+      #   with:
+      #     image: <your-docker-hub-username>/airlab-app:latest
+
+      # - name: Display downloaded image information
+      #   run: |
+      #     echo "Image Name: ${{ steps.download-image.outputs.name }}"
+      #     echo "Image Tag: ${{ steps.download-image.outputs.tag }}"
+
+      - name: Request approval
+        id: approval
+        uses: softprops/action-approval@v2
+        with:
+          message: "Do you approve deploying to production?"
+          reviewers: "your-github-username"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Deploy to production only if approval is granted
+      - name: Deploy Kubectl deployment and services
+        run: |            
+          # Deploy deployment file
+          kubectl --context production-context apply -f airlab-deployment.yaml
+
+          # Deploy service file
+          kubectl --context production-context apply -f airlab-service.yaml
+        working-directory: Infra/          

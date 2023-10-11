@@ -1,11 +1,9 @@
 import requests
 import os
 
-# Parameters. They should be stored separately
+# Parameters which are defined in kubernetes cluster
 api_key = os.environ.get('API_KEY')
 base_api_url = os.environ.get('BASE_API_URL')
-#base_api_url = "https://open-atms.airlab.aero/api/v1/"
-#api_url = "https://open-atms.airlab.aero/api/v1/airac/airports"  # Replace with your API URL
 
 # Define headers with the API key
 headers = {
@@ -16,71 +14,99 @@ headers = {
 ## TODO, can check frequency of data fetch. If data is not expected to change often, might make more sense to query 
 ## and cache locally with an option to force refresh
 
-## Query backend server for SID information
-def query_server_sid(airport_code):
+## Query backend server for STARS information
+def query_backend(api_url):
     try:
         # Send a GET request to the API endpoint
-        api_url = base_api_url + "airac/sids/airport/" + airport_code
-        print("Querying api_url: " + api_url)
+        print("Querying URL from backend: " + api_url)
         response = requests.get(api_url, headers=headers, auth=None)
     
         # Check if the request was successful (status code 200)
         if response.status_code == 200:
+            print("Response from " + api_url + " is 200")
             # Parse the JSON response
             data = response.json()
+            #print(json.dumps(data,indent=4))
             
-            # Display the response data
-            print("Response Data:")
-            print(data)
-            #print("Title:", data.get("title"))
-            #print("Body:", data.get("body"))
+            return data
         else:
             print("Request failed with status code:", response.status_code)
     
     except requests.exceptions.RequestException as e:
         print("Request Error:", e)
+        
+    return None
 
 ## Calculate the SID based on the airport code
 ## Currently only supports WSSS
-def calculate_stars(airport_code):
-    if airport_code == "WSSS":
-        response = query_server_sid(airport_code)        
-        
-        # Return results
+def get_top_stars(airport_code, count=2):
+    
+    # Query for the response with the provided airport_code
+    #TODO this can be enhanced to query from local data source first, or to validate this with list of
+    #of ICAO to see if this is a valid code
+    api_url = base_api_url + "airac/stars/airport/" + airport_code
+    stars_response = query_backend(api_url) 
+    
+    if stars_response is None or len(stars_response) == 0:
         output = {
-            "airport": "TEST",
-            "topWaypoints": {
-                "name": "TEST1",
-                "count": "TEST2",
-            }
-        }        
+            "error": "Airport code invalid or no results returned from airlab"
+        }     
     else:
-        output = {
-            "error": "Airport code invalid or not supported yet",
-        }
-
+        # We have results, so we can find the top 2 waypoints by sorting
+        stars_waypoints_sorted = sorted(stars_response, key=lambda x: len(x['waypoints']), reverse=True)
+        
+        output = {"airport":airport_code}
+        
+        # We use sorted list to iterate so we will never go out of bound
+        topWaypoints = []
+        for item in stars_waypoints_sorted:
+            waypoint = {}
+            waypoint['name'] = item['name']
+            waypoint['count'] = len(item['waypoints'])
+            topWaypoints.append(waypoint)
+            
+            # Once hit the count, can terminate
+            if len(topWaypoints) >= count:
+                break
+            
+        output['topWaypoints'] = topWaypoints    
+      
     return output
 
-## Calculate the SID based on the airport code
-## Currently only supports WSSS
-def calculate_sid(airport_code):
-    if airport_code == "WSSS":
-        response = query_server_sid(airport_code)
-        
-        # Return results
+## Select the top N SID based on the airport code. Default top 2 is returned
+def get_top_sids(airport_code, count=2):
+    # Query for the response with the provided airport_code
+    #TODO this can be enhanced to query from local data source first, or to validate this with list of
+    #of ICAO to see if this is a valid code
+    api_url = base_api_url + "airac/sids/airport/" + airport_code
+    sid_response = query_backend(api_url)
+    
+    if sid_response is None or len(sid_response) == 0:
         output = {
-            "airport": "TEST",
-            "topWaypoints": {
-                "name": "TEST1",
-                "count": "TEST2",
-            }
-        }        
+            "error": "Airport code invalid or no results returned from airlab",
+        }     
     else:
-        output = {
-            "error": "Airport code invalid or not supported yet",
-        }          
-
+        # We have results, so we can find the top 2 waypoints by sorting
+        sid_waypoints_sorted = sorted(sid_response, key=lambda x: len(x['waypoints']), reverse=True)
+        
+        output = {"airport":airport_code}
+        
+        # We use sorted list to iterate so we will never go out of bound
+        topWaypoints = []
+        for item in sid_waypoints_sorted:
+            waypoint = {}
+            waypoint['name'] = item['name']
+            waypoint['count'] = len(item['waypoints'])
+            topWaypoints.append(waypoint)
+            
+            # Once hit the count, can terminate
+            if len(topWaypoints) >= count:
+                break
+            
+        output['topWaypoints'] = topWaypoints    
+      
     return output
 
-# Testing mode if running locally
-#query_server_sid("WSSS")
+# Testing mode if running locally or debugging
+#print(get_top_sids("WSSS",2))
+#print(get_top_stars("WSSS",2))

@@ -1,3 +1,5 @@
+# This is a one time execution to set up namespace. It should not be altered unless there is change in environment
+
 apiVersion: v1
 kind: Namespace
 metadata:

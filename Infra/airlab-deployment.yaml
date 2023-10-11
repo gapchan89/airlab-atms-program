@@ -4,7 +4,7 @@ metadata:
   name: airlab-app
   namespace: airlab-namespace
 spec:
-  replicas: 1
+  replicas: 
   selector:
     matchLabels:
       app: airlab-app
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: airlab-app
-          image: airlab-app-image:latest
+          image: airlab-app-image:1.2
           imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 5000
@@ -27,3 +27,9 @@ spec:
                   key: api_key
             - name: BASE_API_URL
               value: "https://open-atms.airlab.aero/api/v1/"
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 5000
+            initialDelaySeconds: 10    # Delay before the first probe
+            periodSeconds: 30          # Interval between probes              
