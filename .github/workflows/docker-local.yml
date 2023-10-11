@@ -55,7 +55,7 @@ jobs:
         run: |            
           # Deploy deployment file
           kubectl apply -f airlab-deployment.yaml
-          kubectl set image deployment/airlab-app my-container=minikube/airlab-app-image:${{ github.sha }}
+          kubectl set image deployment/airlab-app airlab-app=airlab-app-image:${{ github.sha }}
 
           # Deploy service file
           kubectl apply -f airlab-service.yaml
