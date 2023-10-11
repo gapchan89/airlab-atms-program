@@ -48,15 +48,15 @@ jobs:
         run: |       
           # Build Docker image
           docker build -t airlab-app-image:latest .
-          docker tag airlab-app-image:latest minikube/airlab-app-image:${{ github.event.inputs.version }}
+          docker tag airlab-app-image:latest minikube/airlab-app-image:${{ github.sha }}
         working-directory: App/
 
       - name: Deploy Kubectl deployment and services
         run: |            
           # Deploy deployment file
           kubectl apply -f airlab-deployment.yaml
-          kubectl set image deployment/airlab-app my-container=minikube/airlab-app-image:${{ github.event.inputs.version }}
-          
+          kubectl set image deployment/airlab-app my-container=minikube/airlab-app-image:${{ github.sha }}
+
           # Deploy service file
           kubectl apply -f airlab-service.yaml
         working-directory: Infra/
