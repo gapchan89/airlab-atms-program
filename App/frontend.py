@@ -4,6 +4,8 @@ import json
 
 app = Flask(__name__)
 
+#TEST
+
 # API call to get SID
 @app.route('/api/sid/<string:airport_code>', methods=['GET'])
 def get_sid(airport_code):
